@@ -3,15 +3,24 @@ from validators import *
 import pyspark
 import os
 import shutil
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--data', type=str, default='./NYPD_Complaint_Data_Historic.csv', help='location of data csv file')
+args = parser.parse_args()
 
 sc = pyspark.SparkContext.getOrCreate()
 
 # read data into RDD
-data = sc.textFile('./NYPD_Complaint_Data_Historic.csv', 1) \
+try:
+	data = sc.textFile(args.data, 1) \
           .mapPartitions(lambda x: reader(x))
-
-# get column names and remove header
-header = data.first()
+	# get column names and remove header
+	header = data.first()
+except:
+	print("Input data path incorrect: File not found.")
+	exit()
+	
 data = data.filter(lambda x: x != header)
 
 cols = [None]*24
@@ -39,7 +48,7 @@ cols[X_COORD_CD] = data.map(lambda x: (x[X_COORD_CD],'Integer', 'X-coordinate fo
 cols[Y_COORD_CD] = data.map(lambda x: (x[Y_COORD_CD],'Integer', 'X-coordinate for New York State Plane Coordinate System', location_valuecheck(x[X_COORD_CD],x[Y_COORD_CD],x[Latitude],x[Longitude],x[Lat_Lon],'Y')))
 cols[Latitude] = data.map(lambda x:(x[Latitude],'Float','Latitude coordinate for Global Coordinate System', location_valuecheck(x[X_COORD_CD],x[Y_COORD_CD],x[Latitude],x[Longitude],x[Lat_Lon],'LA')))
 cols[Longitude] = data.map(lambda x:(x[Longitude],'Float','Longitude coordinate for Global Coordinate System', location_valuecheck(x[X_COORD_CD],x[Y_COORD_CD],x[Latitude],x[Longitude],x[Lat_Lon],'LO')))
-cols[Lat_Lon] = data.map(lambda x:(x[Lat_Lon],'Location','Location in Global Coordinate System', validlocation_valuecheck(x[X_COORD_CD],x[Y_COORD_CD],x[Latitude],x[Longitude],x[Lat_Lon],'GPS')))
+cols[Lat_Lon] = data.map(lambda x:(x[Lat_Lon],'Location','Location in Global Coordinate System', location_valuecheck(x[X_COORD_CD],x[Y_COORD_CD],x[Latitude],x[Longitude],x[Lat_Lon],'GPS')))
 
 for i in range(len(cols)):
 	outdir = 'col_%d_%s' % (i, header[i])
