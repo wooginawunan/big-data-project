@@ -175,7 +175,7 @@ def location_valuecheck(X_cordi,Y_cordi,latitud, longitude, gps_com, col):
         else:
             return 'INVALID'
 def text_valuecheck(text):
-    if text=='':
+    if text=='' or text==' ':
         return 'NULL'
     else:
         return 'VALID'
