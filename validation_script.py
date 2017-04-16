@@ -3,17 +3,14 @@ from validators import *
 import pyspark
 import os
 import shutil
-import argparse
+import sys
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--data', type=str, default='./NYPD_Complaint_Data_Historic.csv', help='location of data csv file')
-args = parser.parse_args()
-
+file_path = sys.argv[1]
 sc = pyspark.SparkContext.getOrCreate()
 
 # read data into RDD
 try:
-	data = sc.textFile(args.data, 1) \
+	data = sc.textFile(file_path, 1) \
           .mapPartitions(lambda x: reader(x))
 	# get column names and remove header
 	header = data.first()
