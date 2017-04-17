@@ -1,5 +1,5 @@
 import re
-from pyproj import Proj,transform
+#from pyproj import Proj,transform
 
 CMPLNT_NUM=0
 CMPLNT_FR_DT=1
@@ -170,7 +170,8 @@ def location_valuecheck(X_cordi,Y_cordi,latitud, longitude, gps_com, col):
     if dict_missing[col]=='':
         return 'NULL'
     else:  
-        if (col in ['X','Y'] and check_Projection(X_cordi,Y_cordi,latitud, longitude)) or (col in ['LA','LO'] and check_Projection(X_cordi,Y_cordi,latitud, longitude) and check_Lat_Lon(latitud, longitude,gps_com)) or (col == 'GPS' and check_Lat_Lon(latitud, longitude,gps_com)):
+        #if (col in ['X','Y'] and check_Projection(X_cordi,Y_cordi,latitud, longitude)) or (col in ['LA','LO'] and check_Projection(X_cordi,Y_cordi,latitud, longitude) and check_Lat_Lon(latitud, longitude,gps_com)) or (col == 'GPS' and check_Lat_Lon(latitud, longitude,gps_com)):
+        if (col in ['X','Y']) or (col in ['LA','LO'] and check_Lat_Lon(latitud, longitude,gps_com)) or (col == 'GPS' and check_Lat_Lon(latitud, longitude,gps_com)):
             return 'VALID'
         else:
             return 'INVALID'
