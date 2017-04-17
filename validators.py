@@ -27,6 +27,13 @@ Longitude=22
 Lat_Lon = 23
 
 def validate_ID(IDstring):
+    """
+    Checks if the input IDstring is a valid 9-digit ID
+    Args:
+        IDstring: string to validate as ID
+    Return:
+        one of three indicator string 'VALID', 'INVALID', 'NULL'
+    """
     if len(IDstring)==9:
         return 'VALID'
     elif len(IDstring)==0:
@@ -34,10 +41,14 @@ def validate_ID(IDstring):
     else:
         return 'INVALID'
 
-# function that checks if data[colnum] matches coltype 'date'
 def validate_date(datestring, begin=1900, end=2016):
     """
     function that checks if data[colnum] matches coltype date
+    Args:
+        datestring: string to validate as date
+        begin, end: acceptable range for years
+    Return:
+        one of three indicator string 'VALID', 'INVALID', 'NULL'
     """
     if len(datestring)==0:
         return 'NULL'
@@ -69,10 +80,13 @@ def validate_date(datestring, begin=1900, end=2016):
     else:
         return 'INVALID'
 
-# function that checks if data[colnum] matches coltype 'time' 
 def validate_time(timestring):
     """
     function that checks if data[colnum] matches coltype time
+    Args:
+        timetsring: string to validate as time
+    Return:
+        one of three indicator string 'VALID', 'INVALID', 'NULL'
     """
     if len(timestring)==0:
         return 'NULL'
@@ -104,9 +118,14 @@ for key, value in Borough.items():
 precictdict[''] = ''
 
 def borough_valuecheck(borough,precinct):
-    '''
+    """
     check whether value in BORO_NM is a valid Borough namd and consistent with the precinct code
-    '''
+    Args:
+        borough: string to check as borough
+        precinct: string to consider as precinct
+    Return:
+        one of three indicator string 'VALID', 'INVALID', 'NULL'
+    """
     if borough=='':
         return 'NULL'
     else:
@@ -116,9 +135,14 @@ def borough_valuecheck(borough,precinct):
             return 'INVALID'
 
 def precinct_valuecheck(borough,precinct):
-    '''
-    heck whether value in ADDR_PCT_CD is a valid Precinct ID and consistent with the Borough
-    '''
+    """
+    check whether value in ADDR_PCT_CD is a valid Precinct ID and consistent with the Borough
+    Args:
+        borough: string to check as borough
+        precinct: string to consider as precinct
+    Return:
+        one of three indicator string 'VALID', 'INVALID', 'NULL'
+    """
     if precinct=='':
         return 'NULL'
     else:
@@ -130,16 +154,16 @@ def precinct_valuecheck(borough,precinct):
 
 # geographic imformation match checking
 def check_Projection(X_cordi,Y_cordi,latitud, longitude):
-    '''
+    """
     Location information consistency under New York State Plane Coordinate System and Global Coordinate System
     Args:
        X_cordi: X_COORD_CD varible 
        Y_cordi: Y_COORD_CD varible 
        latitud: Latitude varible 
        longitude:  Longitude varible 
-    Returns:
+    Return:
        Boolean indicator for consistency
-    '''
+    """
     if X_cordi!='' and Y_cordi!='' and latitud!='' and longitude!='':
         p = Proj(init="EPSG:2263", preserve_units=True)
         lon,la = p(X_cordi,Y_cordi,inverse=True) 
@@ -151,21 +175,29 @@ def check_Projection(X_cordi,Y_cordi,latitud, longitude):
         return False
 
 def check_Lat_Lon(latitud, longitude, gps_com):
-    '''
+    """
     Global Coordinate System Location information consistency between latitude, longitude and Lat_Lon
-    '''
+    Args:
+       latitud: Latitude varible 
+       longitude:  Longitude varible 
+       gps_com: Lat_Lon coordinate
+    Return:
+        Boolean indicator for consistency
+    """
     if latitud!='' and longitude!='' and gps_com!='' and '(%s, %s)' % (latitud, longitude) == gps_com:
         return True
     else:
         return False
 
 def location_valuecheck(X_cordi,Y_cordi,latitud, longitude, gps_com, col):
-    '''
+    """
     Location related variable checker. 
     Args:
-      X_cordi,Y_cordi,latitud, longitude, gps_com
-      col: variable indicator. Possible values: 'X':X_cordi ,'Y': Y_cordi, 'LA':latitud, 'LO':longitude, 'GPS':gps_com
-    '''
+        X_cordi,Y_cordi,latitud, longitude, gps_com
+        col: variable indicator. Possible values: 'X':X_cordi ,'Y': Y_cordi, 'LA':latitud, 'LO':longitude, 'GPS':gps_com
+    Return:
+        one of three indicator string 'VALID', 'INVALID', 'NULL'
+    """
     dict_missing = {'X':X_cordi ,'Y': Y_cordi, 'LA':latitud, 'LO':longitude, 'GPS':gps_com}
     if dict_missing[col]=='':
         return 'NULL'
@@ -175,6 +207,13 @@ def location_valuecheck(X_cordi,Y_cordi,latitud, longitude, gps_com, col):
         else:
             return 'INVALID'
 def text_valuecheck(text):
+    """
+    Checks if the input string is empty
+    Args:
+        text: string to check
+    Return:
+        one of three indicator string 'VALID', 'INVALID', 'NULL'
+    """
     if text=='' or text==' ':
         return 'NULL'
     else:
