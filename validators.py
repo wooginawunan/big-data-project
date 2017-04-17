@@ -152,6 +152,32 @@ def precinct_valuecheck(borough,precinct):
             return 'INVALID'
 
 
+def check_range(value, col):
+    '''
+    New York City covers a specific range of longitude and latitude. This function checks whether the given
+    longitude or latitude is in the range, i.e. it is in NYC.
+    Args:
+       value: longitude or latitude 
+       col: variable indicator. Possible values: 'X':X_cordi ,'Y': Y_cordi, 'LA':latitud, 'LO':longitude, 'GPS':gps_com
+    Return:
+       one of three indicator string 'VALID', 'INVALID', 'NULL'
+    '''
+    
+    low = {'LA': -74.28, 'LO': 40.49}
+    up = {'LA': -73.69, 'LO': 40.93}
+    if value=='':
+        return 'NULL'
+    else:
+        try:
+            numeric = float(value)
+            if numeric>low[col] and numeric<up[col]:
+                return 'VALID'
+            else:
+                return 'INVALID'
+                
+        except:
+            return 'INVALID'
+        
 # geographic imformation match checking
 def check_Projection(X_cordi,Y_cordi,latitud, longitude):
     """
@@ -202,10 +228,11 @@ def location_valuecheck(X_cordi,Y_cordi,latitud, longitude, gps_com, col):
     if dict_missing[col]=='':
         return 'NULL'
     else:  
-        if (col in ['X','Y'] and check_Projection(X_cordi,Y_cordi,latitud, longitude)) or (col in ['LA','LO'] and check_Projection(X_cordi,Y_cordi,latitud, longitude) and check_Lat_Lon(latitud, longitude,gps_com)) or (col == 'GPS' and check_Lat_Lon(latitud, longitude,gps_com)):
+        if (col in ['X','Y'] and check_Projection(X_cordi,Y_cordi,latitud, longitude)) or (col in ['LA','LO'] and check_range(dict_missing[col],col) and check_Projection(X_cordi,Y_cordi,latitud, longitude) and check_Lat_Lon(latitud, longitude,gps_com)) or (col == 'GPS' and check_Lat_Lon(latitud, longitude,gps_com)):
             return 'VALID'
         else:
             return 'INVALID'
+        
 def text_valuecheck(text):
     """
     Checks if the input string is empty
